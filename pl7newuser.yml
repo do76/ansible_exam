@@ -1,0 +1,32 @@
+---
+- name: Create Admin Windows and Sudo Linux
+  #hosts: windows:linux
+  hosts: pcs
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+    - name: Create Windows Administrator User
+      #hosts: windows
+      ansible.windows.win_user:
+        name: "{{ admin_username }}"
+        password: "{{ admin_password }}"
+        groups: Administrators
+        update_password: on_create
+        #password_expired: true
+      vars:
+        admin_username: "windmin2"
+        admin_password: "windmin123"
+      when: "'Windows' in ansible_facts['os_family']"
+
+    - name: Create Linux User with Sudo Privileges
+      #hosts: linux
+      user:
+        name: "{{ linux_username }}"
+        password: "{{ linux_password | password_hash('sha512') }}"
+        groups: sudo
+        append: yes
+      vars:
+        linux_username: "lindowsxp2"
+        linux_password: "lindowsxp123"
+      when: "'Debian' in ansible_facts['os_family']"

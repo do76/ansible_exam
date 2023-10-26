@@ -1,0 +1,16 @@
+---
+- name: Reboot Servers
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Reboot Linux Servers
+      ansible.builtin.reboot:
+      become: yes
+      when: ansible_facts['os_family'] == "Debian"
+      #when: "'linux' in inventory_hostname"
+
+    - name: Reboot Windows Servers
+      ansible.windows.win_reboot:
+      #command: shutdown /r /t 0
+      when: "'Windows' in ansible_facts['os_family']"

@@ -1,0 +1,50 @@
+---
+- name: Update Operating Systems
+  hosts: pcs
+  gather_facts: yes
+
+  tasks:
+
+  - name: Update All Debian Based Distros
+    ansible.builtin.apt:
+      update_cache: yes
+      upgrade: "yes"
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Autoremove Debian Based Distros Unused Packages
+    ansible.builtin.apt:
+      autoremove: yes
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Update All Arch Based Distros
+    ansible.builtin.pacman:
+      update_cache: true
+      upgrade: true
+    when: ansible_facts['os_family'] == "Archlinux"
+
+  - name: Update All RHEL Based Distros
+    ansible.builtin.dnf:
+      name: "*"
+      state: latest
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Autoremove RHEL Based Distros Unused Packages
+    ansible.builtin.dnf:
+      autoremove: yes
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Update Windows Based Machines
+    ansible.windows.win_updates:
+      category_names:
+      - SecurityUpdates
+      - CriticalUpdates
+      - UpdateRollups
+      - Application
+      - DefinitionUpdates
+      - Updates
+      - Tools
+      reboot: true
+    when: ansible_facts['os_family'] == "Windows"
+
+
+

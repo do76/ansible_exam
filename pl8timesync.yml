@@ -1,0 +1,16 @@
+---
+- name: Configure NTP Time Sync on Windows
+  hosts: pcs
+  gather_facts: no  # We don't need facts for this playbook =)
+
+  tasks:
+    - name: Set NTP Server
+      become: yes
+      win_command: net stop w32time & w32tm /config /syncfromflags:manual /manualpeerlist:"time.windows.com time.nist.gov 0.it.pool.ntp.org 1.it.pool.ntp.org 2.it.pool.ntp.org 3.it.pool.ntp.org" & net start w32time & w32tm /config /update & w32tm /resync /rediscover
+      register: ntp_status
+      #changed_when: ntp_status.rc == 0
+
+    - name: Display NTP Status
+      debug:
+        var: ntp_status.stdout_lines
+

@@ -1,0 +1,15 @@
+---
+- name: Power Off Servers
+  hosts: pcs
+  gather_facts: yes
+
+  tasks:
+    - name: Power Off Linux Servers
+      command: shutdown -h now
+      become: yes
+      when: "'Debian' in ansible_facts['os_family']"
+
+    - name: Power Off Windows Servers
+      become: no
+      win_command: shutdown /s /t 0
+      when: "'Windows' in ansible_facts['os_family']"

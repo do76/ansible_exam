@@ -1,0 +1,14 @@
+---
+- name: Check connectivity
+  hosts: pcs
+  gather_facts: yes
+  
+  tasks:
+
+  - name: Ping if Debian
+    ansible.builtin.ping:
+    when: ansible_facts['os_family'] == "Debian"
+    
+  - name: Ping if Windblows
+    ansible.windows.win_ping:
+    when: ansible_facts['os_family'] == "Windows"
